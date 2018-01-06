@@ -1,0 +1,86 @@
+apply plugin: 'com.android.application'
+// 依赖插件脚本
+apply from: 'tinker-support.gradle'
+android {
+    signingConfigs {
+        hotfixdemo {
+            keyAlias 'hotfixdemo'
+            keyPassword '123456'
+            storeFile file('C:/Demos/hotfix/hotfixdemo.jks')
+            storePassword '123456'
+        }
+    }
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "com.wenping.tinkerdemo"
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 7
+        versionName "7.0"
+        flavorDimensions "versionCode"
+
+        ndk {
+            //设置支持的SO库架构
+            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+        }
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    //编译版本
+    compileOptions{
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+
+    //recomend
+    dexOptions{
+        jumboMode = true;
+    }
+
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            signingConfig signingConfigs.hotfixdemo
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            minifyEnabled true
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    sourceSets {
+        main{
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    buildToolsVersion '26.0.2'
+    productFlavors {
+        m360 {
+            signingConfig signingConfigs.hotfixdemo
+        }
+        yyb {
+            signingConfig signingConfigs.hotfixdemo
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.1'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    implementation 'com.android.support:multidex:1.0.1'
+    // 多dex配置
+    //注释掉原有bugly的仓库
+    //implementation 'com.tencent.bugly:crashreport:latest.release'//其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.3.2
+    implementation 'com.tencent.bugly:crashreport_upgrade:latest.release'
+    implementation 'com.tencent.bugly:nativecrashreport:latest.release'
+    //其中latest.release指代最新版本号，也可以指定明确的版本号，例如2.2.0
+}
